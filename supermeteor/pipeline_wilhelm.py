@@ -44,7 +44,7 @@ Aufnahmejahr = " 2023,"
 # path = glob.glob("C:/Users/Willi/Desktop/Juni22-8-10/GRAVES-XY-Vv_220609*.jpg")
 # path = glob.glob("C:/Users/Willi/Desktop/2022-Dez13-15/GRAVES-xy_221214*.jpg")
 # path = glob.glob("C:/Users/Willi/Desktop/DezXY12-24/GRAVES-XY-Vv_211214*.jpg")
-path = glob.glob("E:/sdr/wilhelm/01/GRAVES-XYmVV_2304271*.jpg")#GRAVES-XYmVV_230427101800
+path = glob.glob("E:/sdr/wilhelm/05/GRAVES-XYmVV_2304290*.jpg")#GRAVES-XYmVV_230429075529
 #path = os.listdir("E:/sdr/wilhelm/02/")
 print (path)
 bg = np.zeros((550, 1900, 3), np.uint8)  # Output Display
@@ -681,5 +681,5 @@ with open('datum.txt', 'w') as f:
     f.write('\r\n')
 
 print('>>>>>>>>>>>>>>>>>>>>>>>>fertig ')
-cv2.waitKey(0)
-cv2.destroyAllWindows()
+#cv2.waitKey(0)
+#cv2.destroyAllWindows()

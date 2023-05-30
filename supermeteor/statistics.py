@@ -5,7 +5,10 @@ import imageio
 import os
 import cv2
 from skimage.metrics import structural_similarity
-
+import numpy as np
+from PIL import Image
+import imagehash
+import shutil
 
 def calculate_meteor_counts_per_hour(file_in):
     df = pd.read_csv(file_in, delimiter='\t')
@@ -14,45 +17,70 @@ def calculate_meteor_counts_per_hour(file_in):
     return df2
 
 
-def get_image(i):
-    data = imageio.imread(path + i)
-    # convert to grey-scale using W3C luminance calc
-    data = sp.inner(data, [299, 587, 114]) / 1000.0
-    # normalize per http: // en.wikipedia.org / wiki / Cross - correlation
-    return (data - data.mean()) / data.std()
 
 
-def get_diff():
-    im1 = cv2.imread('02.jpg')
-    im2 = cv2.imread('01.jpg')
-    # Convert images to grayscale
-    #before_gray = cv2.cvtColor(im1, cv2.COLOR_BGR2GRAY)
-    #after_gray = cv2.cvtColor(im2, cv2.COLOR_BGR2GRAY)
+def remove_duplicates():
+    l = os.listdir(path_roi)
+    c1 = 0
+    c2 = 1
+    duplicate_lst = []
 
-    # Compute SSIM between the two images
-    #(score, diff) = structural_similarity(before_gray, after_gray, full=True)
-    #print("Image Similarity: {:.4f}%".format(score * 100))
-    diff = 255 - cv2.absdiff(im1, im2)
+    for i in l:
+        try:
+            image1_path = path_roi + l[c1]
+            image2_path = path_roi + l[c2]
+            #print (l[c1], l[c2])
+            t1 =  l[c1].split('.')[0]
+            t2 = l[c2].split('.')[0]
+            if t1 == t2:
+                duplicate_lst.append(l[c1].split('_roi.')[0])
+            else:
+                #hash = imagehash.average_hash(Image.open(image1_path))
+                #hash2 = imagehash.average_hash(Image.open(image2_path))
 
-    cv2.imshow('diff', diff)
-    cv2.waitKey()
+                hash = imagehash.dhash(Image.open(image1_path))
+                hash2 = imagehash.dhash(Image.open(image2_path))
+                if hash - hash2 < 17:
+                    #print(l[c1], l[c2], hash - hash2)
+                    #os.makedirs("C:/Users/stefanie/PycharmProjects/SuperMeteor/supermeteor/output/w/" + str(c1) + '/')
+                    #cv2.imwrite("C:/Users/stefanie/PycharmProjects/SuperMeteor/supermeteor/output/w/" + str(c1) + '/' + l[c1], cv2.imread(image1_path))
+                    #cv2.imwrite("C:/Users/stefanie/PycharmProjects/SuperMeteor/supermeteor/output/w/" + str(c1) + '/' + l[c2], cv2.imread(image2_path))
+                    duplicate_lst.append(l[c1].split('_roi.')[0])
+            c1 += 1
+            c2 += 1
+        except IndexError:
+            pass
+    return duplicate_lst
 
 
-def compare_image_similarity(list_of_images):
+def prepare_output(image_lst, duplicate_lst, out_file):
+    out_file = open(out_file, 'w')
+    l = []
+    for image in image_lst:
+        if image.endswith('org.jpg'):
+            l.append(image.split('_org.jpg')[0])
 
-    print (list_of_images)
-    im1 = get_image(list_of_images[0])
-    im2 = get_image(list_of_images[1])
-    im3 = get_image(list_of_images[2])
+    for d in duplicate_lst:
+        if d in l:
+            l.remove(d)
 
-    c11 = c2d(im1, im1, mode='same')  # baseline
-    c12 = c2d(im1, im2, mode='same')
-    c13 = c2d(im1, im3, mode='same')
-    c23 = c2d(im2, im3, mode='same')
-    print (c11.max(), c12.max(), c13.max(), c23.max())
+    for f in l:
+        # open roi
+        img = cv2.imread(path_roi + f + '_roi.jpg')
+        height = img.shape[0]
+        width = img.shape[1]
 
-path = 'C:/Users/stefanie/PycharmProjects/SuperMeteor/supermeteor/output/test/'
-l = os.listdir(path)
-compare_image_similarity(l)
+        # Open org
+        shutil.copyfile(path_pos + f + '_org.jpg', path_capt + f + '_org.jpg')
 
-#get_diff()
+        timestamp = image.split('_')[1]
+        timestamp2 = '20' + timestamp[0:2] + '-' + timestamp[2:4] + '-' + timestamp[4:6] + ' ' + timestamp[6:12]
+        out_file.write(f + '\t' + '20' + timestamp[0:2] + '\t' + timestamp[2:4] + '\t' + timestamp[4:6] + '\t' + timestamp[6:12]
+                       + '\t' + timestamp2 + '\t' + str(height) + '\t' + str(width) + '\n')
+
+path_pos = "C:/Users/stefanie/PycharmProjects/SuperMeteor/supermeteor/output/pos7/"
+path_roi = 'C:/Users/stefanie/PycharmProjects/SuperMeteor/supermeteor/output/rois7/'
+path_capt = "C:/Users/stefanie/PycharmProjects/SuperMeteor/supermeteor/output/7/"
+duplicate_lst = remove_duplicates()
+image_lst = os.listdir(path_pos)
+prepare_output(image_lst, duplicate_lst, 'out7.csv')

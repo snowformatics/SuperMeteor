@@ -20,6 +20,6 @@ segment_image = custom_segmentation()
 segment_image.inferConfig(num_classes= 3, class_names= ["BG", "Artifical-Star", "Background", "Meteor"])
 segment_image.load_model("ok-mask_rcnn_model.068-0.405656.h5")
 
-segmask, output = segment_image.segmentImage("test5.jpg", show_bboxes=True, output_image_name="test5_out.jpg")
+segmask, output = segment_image.segmentImage("50_percent_imagesize.jpg", show_bboxes=True, output_image_name="test_out.jpg")
 
 #print (segmask, output)

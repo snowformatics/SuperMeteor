@@ -9,6 +9,7 @@ import numpy as np
 from PIL import Image
 import imagehash
 import shutil
+import glob
 
 def calculate_meteor_counts_per_hour(file_in):
     df = pd.read_csv(file_in, delimiter='\t')
@@ -20,34 +21,37 @@ def calculate_meteor_counts_per_hour(file_in):
 
 
 def remove_duplicates():
-    l = os.listdir(path_roi)
+    #l = os.listdir(path_roi)
+    l = glob.glob(path_roi+"*roi.jpg")
+    #print (l, len(l))
     c1 = 0
     c2 = 1
     duplicate_lst = []
 
     for i in l:
         try:
-            image1_path = path_roi + l[c1]
-            image2_path = path_roi + l[c2]
-            #print (l[c1], l[c2])
-            t1 =  l[c1].split('.')[0]
-            t2 = l[c2].split('.')[0]
-            if t1 == t2:
-                duplicate_lst.append(l[c1].split('_roi.')[0])
-            else:
-                #hash = imagehash.average_hash(Image.open(image1_path))
-                #hash2 = imagehash.average_hash(Image.open(image2_path))
-
-                hash = imagehash.dhash(Image.open(image1_path))
-                hash2 = imagehash.dhash(Image.open(image2_path))
-                if hash - hash2 < 17:
-                    #print(l[c1], l[c2], hash - hash2)
-                    #os.makedirs("C:/Users/stefanie/PycharmProjects/SuperMeteor/supermeteor/output/w/" + str(c1) + '/')
-                    #cv2.imwrite("C:/Users/stefanie/PycharmProjects/SuperMeteor/supermeteor/output/w/" + str(c1) + '/' + l[c1], cv2.imread(image1_path))
-                    #cv2.imwrite("C:/Users/stefanie/PycharmProjects/SuperMeteor/supermeteor/output/w/" + str(c1) + '/' + l[c2], cv2.imread(image2_path))
+            if i.endswith('_roi.jpg'):
+                image1_path =  l[c1]
+                image2_path =  l[c2]
+                #print (l[c1], l[c2])
+                t1 =  l[c1].split('.')[0]
+                t2 = l[c2].split('.')[0]
+                if t1 == t2:
                     duplicate_lst.append(l[c1].split('_roi.')[0])
-            c1 += 1
-            c2 += 1
+                else:
+                    #hash = imagehash.average_hash(Image.open(image1_path))
+                    #hash2 = imagehash.average_hash(Image.open(image2_path))
+
+                    hash = imagehash.dhash(Image.open(image1_path))
+                    hash2 = imagehash.dhash(Image.open(image2_path))
+                    if hash - hash2 < 17:
+                        #print(l[c1], l[c2], hash - hash2)
+                        #os.makedirs("C:/Users/stefanie/PycharmProjects/SuperMeteor/supermeteor/output/w/" + str(c1) + '/')
+                        #cv2.imwrite("C:/Users/stefanie/PycharmProjects/SuperMeteor/supermeteor/output/w/" + str(c1) + '/' + l[c1], cv2.imread(image1_path))
+                        #cv2.imwrite("C:/Users/stefanie/PycharmProjects/SuperMeteor/supermeteor/output/w/" + str(c1) + '/' + l[c2], cv2.imread(image2_path))
+                        duplicate_lst.append(l[c1].split('_roi.')[0])
+                c1 += 1
+                c2 += 1
         except IndexError:
             pass
     return duplicate_lst
@@ -66,21 +70,35 @@ def prepare_output(image_lst, duplicate_lst, out_file):
 
     for f in l:
         # open roi
-        img = cv2.imread(path_roi + f + '_roi.jpg')
-        height = img.shape[0]
-        width = img.shape[1]
+        try:
 
-        # Open org
-        shutil.copyfile(path_pos + f + '_org.jpg', path_capt + f + '_org.jpg')
+            img = cv2.imread(path_roi + f + '_roi.jpg')
+            height = img.shape[0]
+            width = img.shape[1]
 
-        timestamp = image.split('_')[1]
-        timestamp2 = '20' + timestamp[0:2] + '-' + timestamp[2:4] + '-' + timestamp[4:6] + ' ' + timestamp[6:12]
-        out_file.write(f + '\t' + '20' + timestamp[0:2] + '\t' + timestamp[2:4] + '\t' + timestamp[4:6] + '\t' + timestamp[6:12]
-                       + '\t' + timestamp2 + '\t' + str(height) + '\t' + str(width) + '\n')
+            # Open org
+            shutil.copyfile(path_pos + f + '_org.jpg', path_capt + f + '_org.jpg')
 
-path_pos = "C:/Users/stefanie/PycharmProjects/SuperMeteor/supermeteor/output/pos7/"
-path_roi = 'C:/Users/stefanie/PycharmProjects/SuperMeteor/supermeteor/output/rois7/'
-path_capt = "C:/Users/stefanie/PycharmProjects/SuperMeteor/supermeteor/output/7/"
+            timestamp = f.split('_')[1]
+            timestamp2 = '20' + timestamp[0:2] + '-' + timestamp[2:4] + '-' + timestamp[4:6] + ' ' + timestamp[6:12]
+            #print (f, timestamp)
+            out_file.write(f + '\t' + '20' + timestamp[0:2] + '\t' + timestamp[2:4] + '\t' + timestamp[4:6] + '\t' + timestamp[6:12]
+                           + '\t' + timestamp2 + '\t' + str(height) + '\t' + str(width) + '\n')
+        except:
+            print(path_roi + f + '_roi.jpg')
+            # timestamp = f.split('_')[1]
+            # timestamp2 = '20' + timestamp[0:2] + '-' + timestamp[2:4] + '-' + timestamp[4:6] + ' ' + timestamp[6:12]
+            # # print (f, timestamp)
+            # out_file.write(
+            #     f + '\t' + '20' + timestamp[0:2] + '\t' + timestamp[2:4] + '\t' + timestamp[4:6] + '\t' + timestamp[
+            #                                                                                               6:12]
+            #     + '\t' + timestamp2 + '\t' + str('na') + '\t' + str('na') + '\n')
+
+#path_pos = "C:/Users/stefanie/PycharmProjects/SuperMeteor/supermeteor/output/pos12/"
+path_pos = "G:/Meine Ablage/sdr/01_output/"
+path_roi = "G:/Meine Ablage/sdr/01_output/"
+path_capt = "G:/Meine Ablage/sdr/pos/"
 duplicate_lst = remove_duplicates()
+#print (len(duplicate_lst))
 image_lst = os.listdir(path_pos)
-prepare_output(image_lst, duplicate_lst, 'out7.csv')
+prepare_output(image_lst, duplicate_lst, 'out01.csv')

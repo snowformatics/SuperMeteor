@@ -195,15 +195,18 @@ def upload_top5(top5, path_positives, image_out):
                 image_out.write(the_value + '\n')
 
 
+
 #run_segmentation(path_in, path_out, path_negatives, remove_raw_file=True)
 #duplicate_lst = remove_duplicated_rois(path_out)
 out_file = 'out_all.csv'
 image_out = 'image_out.csv'
 #create_results(out_file, path_out, duplicate_lst)
 
-#data = load_data(out_file)
-#largest_objects_per_day = get_top5_meteors(data)
-#top5 = get_top5(path_positives, largest_objects_per_day)
+data = load_data(out_file)
+#print (data)
+largest_objects_per_day = get_top5_meteors(data)
+top5 = get_top5(path_positives, largest_objects_per_day)
+#print (top5)
 #top5 = ['GRAVES-XYmVV_230530184629.jpg_1_org.jpg', 'GRAVES-XYmVV_230530195100.jpg_1_org.jpg', 'GRAVES-XYmVV_230530201629.jpg_1_org.jpg', 'GRAVES-XYmVV_230530202659.jpg_1_org.jpg', 'GRAVES-XYmVV_230530210429.jpg_1_org.jpg', 'GRAVES-XYmVV_230531002400.jpg_1_org.jpg', 'GRAVES-XYmVV_230531003430.jpg_1_org.jpg', 'GRAVES-XYmVV_230531004630.jpg_1_org.jpg', 'GRAVES-XYmVV_230531005400.jpg_1_org.jpg', 'GRAVES-XYmVV_230531010859.jpg_1_org.jpg', 'GRAVES-XYmVV_230601000000.jpg_1_org.jpg', 'GRAVES-XYmVV_230601000130.jpg_1_org.jpg', 'GRAVES-XYmVV_230601000300.jpg_1_org.jpg', 'GRAVES-XYmVV_230601001200.jpg_1_org.jpg', 'GRAVES-XYmVV_230601002400.jpg_1_org.jpg', 'GRAVES-XYmVV_230602002230.jpg_1_org.jpg', 'GRAVES-XYmVV_230602005400.jpg_1_org.jpg', 'GRAVES-XYmVV_230602005700.jpg_1_org.jpg', 'GRAVES-XYmVV_230602011629.jpg_1_org.jpg', 'GRAVES-XYmVV_230602013129.jpg_1_org.jpg', 'GRAVES-XYmVV_230603000130.jpg_1_org.jpg', 'GRAVES-XYmVV_230603001800.jpg_1_org.jpg', 'GRAVES-XYmVV_230603003000.jpg_1_org.jpg', 'GRAVES-XYmVV_230603012230.jpg_1_org.jpg', 'GRAVES-XYmVV_230603013430.jpg_1_org.jpg', 'GRAVES-XYmVV_230604140000.jpg_1_org.jpg', 'GRAVES-XYmVV_230604140000.jpg_2_org.jpg', 'GRAVES-XYmVV_230604143300.jpg_1_org.jpg', 'GRAVES-XYmVV_230604143429.jpg_1_org.jpg', 'GRAVES-XYmVV_230604144030.jpg_1_org.jpg', 'GRAVES-XYmVV_230604144030.jpg_2_org.jpg', 'GRAVES-XYmVV_230605075829.jpg_1_org.jpg', 'GRAVES-XYmVV_230604225659.jpg_1_org.jpg', 'GRAVES-XYmVV_230605070430.jpg_1_org.jpg', 'GRAVES-XYmVV_230605070430.jpg_2_org.jpg', 'GRAVES-XYmVV_230605124159.jpg_1_org.jpg', 'GRAVES-XYmVV_230605151929.jpg_1_org.jpg', 'GRAVES-XYmVV_230605152059.jpg_1_org.jpg', 'GRAVES-XYmVV_230605152059.jpg_2_org.jpg', 'GRAVES-XYmVV_230606051029.jpg_1_org.jpg', 'GRAVES-XYmVV_230606061500.jpg_1_org.jpg', 'GRAVES-XYmVV_230606132059.jpg_1_org.jpg', 'GRAVES-XYmVV_230606132059.jpg_2_org.jpg', 'GRAVES-XYmVV_230606151800.jpg_1_org.jpg', 'GRAVES-XYmVV_230606135530.jpg_1_org.jpg', 'GRAVES-XYmVV_230607045700.jpg_1_org.jpg', 'GRAVES-XYmVV_230607045700.jpg_2_org.jpg', 'GRAVES-XYmVV_230607024759.jpg_1_org.jpg', 'GRAVES-XYmVV_230607142530_1_org.jpg', 'GRAVES-XYmVV_230607142659_1_org.jpg', 'GRAVES-XYmVV_230607154800_1_org.jpg']
-top5 = []
+#top5 = []
 upload_top5(top5, path_positives, image_out)

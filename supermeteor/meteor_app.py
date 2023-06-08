@@ -27,6 +27,8 @@ DATE_COLUMN = 'date/time'
 #DATA_URL = ('https://s3-us-west-2.amazonaws.com/'
             #'streamlit-demo-data/uber-raw-data-sep14.csv.gz')
 DATA_URL = ("https://raw.githubusercontent.com/snowformatics/SuperMeteor/master/supermeteor/test.csv")
+DATA_URL_top5 = ("https://raw.githubusercontent.com/snowformatics/SuperMeteor/master/supermeteor/image_out.csv")
+
 #DATA_URL = ("test.csv")
 
 today = date.today()
@@ -118,14 +120,29 @@ with col1:
 
 with col2:
     st.subheader('Top 5 Meteor images')
-    st.image(
-        "https://ik.imagekit.io/nb4gbrqqe/GRAVES-XYmVV_230607172530_1_org.jpg",
-        width=600,
-    )
-    st.image(
-        "https://ik.imagekit.io/nb4gbrqqe/GRAVES-XYmVV_230607172530_1_org.jpg",
-        width=600,
-    )
+    top_meteors = pd.read_csv(DATA_URL_top5, header=None)
+    top_meteors.columns = ['url']
+    top_meteor_list = []
+    for index, row in data2.iterrows():
+        id_all = row['image_file'][0:25]
+        for index1, row1 in top_meteors.iterrows():
+            id_top5 = row1['url'].split('/')[4][0:25]
+            if id_all == id_top5:
+                if id_top5 not in top_meteor_list:
+                    top_meteor_list.append(id_top5)
+                    st.image(row1['url'],width=600)
+    #print (top_meteor_list)
+
+
+    # st.image(
+    #     "https://i
+    #     k.imagekit.io/nb4gbrqqe/GRAVES-XYmVV_230607172530_1_org.jpg",
+    #     width=600,
+    # )
+    # st.image(
+    #     "https://ik.imagekit.io/nb4gbrqqe/GRAVES-XYmVV_230607172530_1_org.jpg",
+    #     width=600,
+    # )
 #     date_input2 = st.date_input(
 #         "Choose a date",
 #         datetime.date(today.year, today.month, today.day), key=1)

@@ -1,11 +1,10 @@
 import streamlit as st
 import pandas as pd
 import numpy as np
-from datetime import datetime
 from datetime import date
 import datetime
 import streamlit.components.v1 as components
-import calendar
+
 
 st.set_page_config(layout="wide")
 
@@ -26,10 +25,10 @@ col1, col2 = st.columns([2,2], gap="medium")
 DATE_COLUMN = 'date/time'
 #DATA_URL = ('https://s3-us-west-2.amazonaws.com/'
             #'streamlit-demo-data/uber-raw-data-sep14.csv.gz')
-DATA_URL = ("https://raw.githubusercontent.com/snowformatics/SuperMeteor/master/supermeteor/test.csv")
+DATA_URL = ("https://raw.githubusercontent.com/snowformatics/SuperMeteor/master/supermeteor/out_all2.csv")
 DATA_URL_top5 = ("https://raw.githubusercontent.com/snowformatics/SuperMeteor/master/supermeteor/image_out.csv")
 
-#DATA_URL = ("test.csv")
+#DATA_URL = ("out_all.csv")
 
 today = date.today()
 
@@ -52,10 +51,10 @@ def get_top5_meteors(data):
 
 
 @st.cache_data
-def load_data(nrows):
+def load_data():
     data = pd.read_csv(DATA_URL, delimiter='\t', dtype={'time':str})
 
-
+    #data = data.sort_values(by=['image_file'])
 
     data['date'] = data["timestemp"].str.slice(stop=10)
     data['date'] = pd.to_datetime(data['date'], format=f)
@@ -68,6 +67,8 @@ def load_data(nrows):
                                           data['time'].astype(str))
 
 
+    data = data.sort_values(by=['date'])
+    #print('ok', data)
 
     return data
 
@@ -82,7 +83,7 @@ def ChangeWidgetFontSize(wgt_txt, wch_font_size = '12px'):
 
 
 #data_load_state = st.text('Loading data...')
-data = load_data(10000)
+data = load_data()
 largest_objects_per_day = get_top5_meteors(data)
 
 #print (largest_objects_per_day)
@@ -118,19 +119,20 @@ with col1:
     # st.bar_chart(hist_values2)
 
 
-with col2:
-    st.subheader('Top 5 Meteor images')
-    top_meteors = pd.read_csv(DATA_URL_top5, header=None)
-    top_meteors.columns = ['url']
-    top_meteor_list = []
-    for index, row in data2.iterrows():
-        id_all = row['image_file'][0:25]
-        for index1, row1 in top_meteors.iterrows():
-            id_top5 = row1['url'].split('/')[4][0:25]
-            if id_all == id_top5:
-                if id_top5 not in top_meteor_list:
-                    top_meteor_list.append(id_top5)
-                    st.image(row1['url'],width=600)
+# with col2:
+#     st.subheader('Top 5 Meteor images')
+#     top_meteors = pd.read_csv(DATA_URL_top5, header=None)
+#     top_meteors.columns = ['url']
+#     top_meteor_list = []
+#     for index, row in data2.iterrows():
+#         id_all = row['image_file'][0:25]
+#         for index1, row1 in top_meteors.iterrows():
+#             id_top5 = row1['url'].split('/')[4][0:25]
+#             if id_all == id_top5:
+#                 if id_top5 not in top_meteor_list:
+#                     top_meteor_list.append(id_top5)
+#                     st.image(row1['url'],width=600)
+
     #print (top_meteor_list)
 
 

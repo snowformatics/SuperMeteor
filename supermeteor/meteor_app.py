@@ -5,6 +5,7 @@ from datetime import date
 import datetime
 import streamlit.components.v1 as components
 
+import re
 
 st.set_page_config(layout="wide")
 
@@ -118,10 +119,22 @@ with col1:
     # hist_values2 = np.histogram(data[DATE_COLUMN].dt.month, bins=12, range=(0, 12))[0]
     # st.bar_chart(hist_values2)
 
+with col2:
+    st.subheader('Top 5 Meteor images')
+    urls = pd.read_csv(DATA_URL_top5, header=None)
+    urls.columns = ['u']
+    urls = urls['u'].values.tolist()
 
-# with col2:
-#     st.subheader('Top 5 Meteor images')
-#     top_meteors = pd.read_csv(DATA_URL_top5, header=None)
+    #print (urls)
+    #pattern = r"2307020"  # Pattern to match
+    pattern = str(date_input1).replace('-', '')[2:8]
+    #print (pattern)
+    matching_elements = [element for element in urls if re.search(pattern, element)]
+    #print (matching_elements)
+    for i in matching_elements:
+        st.image(i, width=600)
+
+    #print(matching_elements)
 #     top_meteors.columns = ['url']
 #     top_meteor_list = []
 #     for index, row in data2.iterrows():

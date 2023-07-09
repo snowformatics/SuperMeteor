@@ -119,11 +119,22 @@ with col1:
 
 
 with col2:
+    import re
     st.subheader('Top 5 Meteor images')
     top_meteors = pd.read_csv(DATA_URL_top5, header=None)
-    top_meteors.sort_values()
-    top_meteors.to_csv('out.csv')
-    print (top_meteors)
+    top_meteors.columns = ['urls']
+    l = top_meteors['urls'].tolist()
+    pattern = str(date_input1).replace('-', '')[2:8]
+    #print(pattern)
+
+    matching_elements = [element for element in l if re.search(pattern, element)][0:5]
+    for x in matching_elements:
+        st.image(x,width=600)
+   # print (matching_elements)
+    #print (x)
+    #top_meteors.sort_values()
+    #top_meteors.to_csv('out.csv')
+    #print (top_meteors)
     #data2['id_all'] = data2['image_file'].str[:25]
     #top_meteors['id_top5'] = top_meteors[0].str.split('/').str[4].str[:25]
     #print (top_meteors['id_top5'])

@@ -51,7 +51,7 @@ def get_top5_meteors(data):
     return largest_objects_per_day
 
 
-@st.cache_data
+@st.cache_data(ttl=datetime.timedelta(hours=24))
 def load_data(nrows):
     data = pd.read_csv(DATA_URL, delimiter='\t', dtype={'time':str})
 
@@ -82,7 +82,7 @@ def ChangeWidgetFontSize(wgt_txt, wch_font_size = '12px'):
 
 
 #data_load_state = st.text('Loading data...')
-data = load_data(10000)
+data = load_data(100000)
 largest_objects_per_day = get_top5_meteors(data)
 
 #print (largest_objects_per_day)
@@ -121,16 +121,24 @@ with col1:
 with col2:
     st.subheader('Top 5 Meteor images')
     top_meteors = pd.read_csv(DATA_URL_top5, header=None)
-    top_meteors.columns = ['url']
-    top_meteor_list = []
-    for index, row in data2.iterrows():
-        id_all = row['image_file'][0:25]
-        for index1, row1 in top_meteors.iterrows():
-            id_top5 = row1['url'].split('/')[4][0:25]
-            if id_all == id_top5:
-                if id_top5 not in top_meteor_list:
-                    top_meteor_list.append(id_top5)
-                    st.image(row1['url'],width=600)
+    top_meteors.sort_values()
+    top_meteors.to_csv('out.csv')
+    print (top_meteors)
+    #data2['id_all'] = data2['image_file'].str[:25]
+    #top_meteors['id_top5'] = top_meteors[0].str.split('/').str[4].str[:25]
+    #print (top_meteors['id_top5'])
+
+    #top_meteor_list = data2[data2['id_all'].isin(top_meteors['id_top5'])]['id_all'].unique().tolist()
+#     top_meteors.columns = ['url']
+#     top_meteor_list = []
+#     for index, row in data2.iterrows():
+#         id_all = row['image_file'][0:25]
+#         for index1, row1 in top_meteors.iterrows():
+#             id_top5 = row1['url'].split('/')[4][0:25]
+#             if id_all == id_top5:
+#                 if id_top5 not in top_meteor_list:
+#                     top_meteor_list.append(id_top5)
+#                     st.image(row1['url'],width=600)
     #print (top_meteor_list)
 
 

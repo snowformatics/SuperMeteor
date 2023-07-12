@@ -6,7 +6,7 @@ from datetime import date
 import datetime
 import streamlit.components.v1 as components
 import calendar
-
+#streamlit run C:/Users/stefanie/PycharmProjects/SuperMeteor/meteor_app.py
 st.set_page_config(layout="wide")
 
 st.title('Meteor Scattering')

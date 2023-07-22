@@ -55,8 +55,6 @@ def get_top5_meteors(data):
 def load_data(nrows):
     data = pd.read_csv(DATA_URL, delimiter='\t', dtype={'time':str})
 
-
-
     data['date'] = data["timestemp"].str.slice(stop=10)
     data['date'] = pd.to_datetime(data['date'], format=f)
     data['time'] = pd.to_datetime(data['time'], format=f2)
@@ -82,7 +80,7 @@ def ChangeWidgetFontSize(wgt_txt, wch_font_size = '12px'):
 
 
 #data_load_state = st.text('Loading data...')
-data = load_data(100000)
+data = load_data(1000000)
 largest_objects_per_day = get_top5_meteors(data)
 
 #print (largest_objects_per_day)

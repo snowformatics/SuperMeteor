@@ -26,7 +26,7 @@ col1, col2 = st.columns([2,2], gap="medium")
 DATE_COLUMN = 'date/time'
 #DATA_URL = ('https://s3-us-west-2.amazonaws.com/'
             #'streamlit-demo-data/uber-raw-data-sep14.csv.gz')
-DATA_URL = ("https://raw.githubusercontent.com/snowformatics/SuperMeteor/master/supermeteor/out_all.csv")
+DATA_URL = ("https://raw.githubusercontent.com/snowformatics/SuperMeteor/master/supermeteor/out_all2.csv")
 DATA_URL_top5 = ("https://raw.githubusercontent.com/snowformatics/SuperMeteor/master/supermeteor/image_out.csv")
 
 #DATA_URL = ("test.csv")

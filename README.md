@@ -6,8 +6,10 @@ Installation
 
 2. Install all packages
 
-`pip3 install scikit-image==0.18.3
- pip3 install tensorflow==2.5.0
- pip3 install imgaug
- pip3 install pixellib --upgrade
- pip3 install numpy==1.19.5`
+`conda create -n meteor_env python=3.9.7`
+`conda activate meteor_env`
+`pip3 install tensorflow==2.5.0`
+`pip3 install imgaug==0.4.0`
+`pip3 install pixellib==0.7.1`
+`pip3 install numpy==1.23.5`
+

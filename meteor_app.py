@@ -88,7 +88,7 @@ largest_objects_per_day = get_top5_meteors(data)
 with col1:
     date_input1 = st.date_input(
         "Choose a date",
-        datetime.date(today.year, today.month, today.day-1))
+        datetime.date(today.year, today.month, today.day))
     # Filter by date
     st.subheader('Number of meteors by hour')
 

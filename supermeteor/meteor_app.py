@@ -51,7 +51,7 @@ def get_top5_meteors(data):
     return largest_objects_per_day
 
 
-@st.cache_data
+@st.experimental_memo
 def load_data():
     data = pd.read_csv(DATA_URL, delimiter='\t', dtype={'time':str})
 
@@ -90,9 +90,10 @@ largest_objects_per_day = get_top5_meteors(data)
 #print (largest_objects_per_day)
 
 with col1:
+
     date_input1 = st.date_input(
         "Choose a date",
-        datetime.date(today.year, today.month, today.day-1))
+        datetime.date(today.year, today.month, today.day))
     # Filter by date
     st.subheader('Number of meteors by hour')
 

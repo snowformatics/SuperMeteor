@@ -1,32 +1,13 @@
 from pixellib.instance import custom_segmentation
 import os
 import cv2
-import pandas as pd
+import schedule
+import time
 from datetime import datetime
-
-
-path_in = "C:/Users/lueck/Nextcloud/meteor/"
-
-today = datetime.now()
-
-try:
-    dir_name_pos = os.makedirs("C:/Users/lueck/meteor/pos/" + today.strftime('%Y%m%d'))
-    dir_name_neg = os.makedirs("C:/Users/lueck/meteor/neg/"  + today.strftime('%Y%m%d'))
-
-except FileExistsError:
-    dir_name_pos = "C:/Users/lueck/meteor/pos/" + today.strftime('%Y%m%d')
-    dir_name_neg = "C:/Users/lueck/meteor/neg/" + today.strftime('%Y%m%d')
-
-
-path_out = dir_name_pos
-path_negatives = dir_name_neg
-path_positives = dir_name_pos
-
-print (path_positives, path_negatives)
-
-
+import pandas as pd
 def run_segmentation(path_in, path_out, path_negatives, remove_raw_file=False):
     """Reads the raw images from SpectrumLab and start mask-c-rnn segmentation."""
+
 
 
     meteor_class = 3
@@ -39,7 +20,7 @@ def run_segmentation(path_in, path_out, path_negatives, remove_raw_file=False):
     segment_image.load_model("mask_rcnn_model.040-0.432872.h5")
 
     for image in image_lst:
-        #print (path_in + image)
+       # print (path_in + image)
         n = 1
         try:
             output, segmask = segment_image.segmentImage(path_in + image, show_bboxes=True,
@@ -71,9 +52,9 @@ def run_segmentation(path_in, path_out, path_negatives, remove_raw_file=False):
                os.remove(path_in + image)
         except:
             print (image)
-            print(coord)
-            cv2.imshow('', org_image)
-            cv2.waitKey(0)
+
+            #cv2.imshow('', org_image)
+            #cv2.waitKey(0)
             os.remove(path_in + image)
 
 
@@ -138,6 +119,7 @@ def run_image_upload(directory_path):
 
 def create_results(out_file, path_out):
     """Create the final result file for the web app."""
+    print ('ok')
     out_file = open(out_file, 'a')
     # We get all images which contain meteors
     image_lst = os.listdir(path_out)
@@ -163,7 +145,7 @@ def create_results(out_file, path_out):
 
 def upload_top5(top5, path_positives, image_out):
     import base64
-    import time
+
     from imagekitio import ImageKit
     from imagekitio.models.UploadFileRequestOptions import UploadFileRequestOptions
 
@@ -176,7 +158,8 @@ def upload_top5(top5, path_positives, image_out):
     )
     for img_f in top5:
         print (img_f)
-        with open(path_positives + img_f, 'rb') as f:
+        img_f = img_f.replace('roi', 'org')
+        with open(path_positives +'/' + img_f, 'rb') as f:
             # Read the contents of the file
             image_data = f.read()
             # Encode the image data to base64
@@ -193,8 +176,50 @@ def upload_top5(top5, path_positives, image_out):
         #print(upload.name)
         image_out.write('https://ik.imagekit.io/nb4gbrqqe/' + upload.name + '\n')
 
-#run_segmentation(path_in, path_out, path_negatives, remove_raw_file=True)
-directory_path = 'C:/Users/lueck/meteor/pos/20230728/'# dir_name_pos
-create_results('out_all2.csv', directory_path)
-top_5_images = run_image_upload(directory_path)
-upload_top5(top_5_images, directory_path, 'image_out.csv')
+
+
+
+def job(t):
+    print ("I'm working...", t)
+
+    import os
+
+    from datetime import datetime
+
+    path_in = "C:/Users/lueck/Nextcloud/meteor/"
+
+    today = datetime.now()
+
+    try:
+        dir_name_pos = os.makedirs("C:/Users/lueck/meteor/pos/" + today.strftime('%Y%m%d'))
+        dir_name_neg = os.makedirs("C:/Users/lueck/meteor/neg/" + today.strftime('%Y%m%d'))
+
+    except FileExistsError:
+        dir_name_pos = "C:/Users/lueck/meteor/pos/" + today.strftime('%Y%m%d')
+        dir_name_neg = "C:/Users/lueck/meteor/neg/" + today.strftime('%Y%m%d')
+
+    path_out = dir_name_pos
+    path_negatives = dir_name_neg
+    path_positives = dir_name_pos
+
+    print(path_positives, path_negatives)
+
+    run_segmentation(path_in, path_out, path_negatives, remove_raw_file=True)
+    directory_path = dir_name_pos
+
+    top_5_images = run_image_upload(directory_path)
+    upload_top5(top_5_images, directory_path, 'image_out.csv')
+    create_results('out_all2.csv', directory_path)
+    print ('done')
+    return
+#job('')
+
+
+#directory_path = "C:/Users/lueck/meteor/pos/20230808/"
+#create_results('out_all2.csv', directory_path)
+#top_5_images = run_image_upload(directory_path)
+#upload_top5(top_5_images, directory_path, 'image_out.csv')
+schedule.every().day.at("23:58").do(job,'It is 14:08')
+
+while True:
+    schedule.run_pending()
